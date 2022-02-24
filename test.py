@@ -1,85 +1,108 @@
-import sys
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt
+from turtle import *
 
+class Disk(object):
+    def __init__(self, name = "", xpos = 0, ypos = 0, height = 20, width = 40):
+        self.dname = name
+        self.dxpos = xpos
+        self.dypos = ypos
+        self.dheight = height
+        self.dwidth = width
 
-class Canvas(QtWidgets.QLabel):
+        self.t = Turtle()
+        self.t.speed(0)
+        self.t.fillcolor("blue")
 
-    def __init__(self):
-        super().__init__()
-        pixmap = QtGui.QPixmap(600, 300)
-        self.setPixmap(pixmap)
+    def showdisk(self):
+        self.t.pu()
+        self.t.setposition(self.dxpos, self.dypos)
+        self.t.pd()
+        self.t.begin_fill()
+        
+        for i in range(2):
+            self.t.forward(self.dwidth/2)
+            self.t.left(90)
+            self.t.forward(self.dheight)
+            self.t.left(90)
+            self.t.forward(self.dwidth/2)
+        
+        self.t.end_fill()
+        self.t.pu()
+        
+    def newpos(self, xpos, ypos):
+        self.dxpos = xpos
+        self.dypos = ypos
+        
+    def cleardisk(self):
+        self.t.clear()
 
-        self.last_x, self.last_y = None, None
-        self.pen_color = QtGui.QColor('#000000')
+class Pole(object):
+    def __init__(self, name = "", xpos = 0, ypos = 0, thick = 10, length = 100):
+        self.pname = name
+        self.stack = []
+        self.toppos = 0
+        self.pxpos = xpos
+        self.pypos = ypos
+        self.pthick = thick
+        self.plength = length
 
-    def set_pen_color(self, c):
-        self.pen_color = QtGui.QColor(c)
+        self.t = Turtle()
+        self.t.speed(0)
+        self.t.fillcolor("green")
 
-    def mouseMoveEvent(self, e):
-        if self.last_x is None: # First event.
-            self.last_x = e.x()
-            self.last_y = e.y()
-            return # Ignore the first time.
+    def showpole(self):
+        self.t.pu()
+        self.t.setposition(self.pxpos, self.pypos)
+        self.t.pd()
+        self.t.begin_fill()
+        
+        for i in range(2):
+            self.t.forward(self.pthick/2)
+            self.t.left(90)
+            self.t.forward(self.plength)
+            self.t.left(90)
+            self.t.forward(self.pthick/2)
+        
+        self.t.end_fill()
+        self.t.pu()
 
-        canvas = self.pixmap()
-        painter = QtGui.QPainter(canvas)
-        p = painter.pen()
-        p.setWidth(4)
-        p.setColor(self.pen_color)
-        painter.setPen(p)
-        painter.drawLine(self.last_x, self.last_y, e.x(), e.y())
-        painter.end()
-        self.setPixmap(canvas)
+    def pushdisk(self, disk):
+        disk.newpos(self.pxpos, self.toppos)
+        disk.showdisk()
+        self.toppos += disk.dheight
+        self.stack.append(disk)
 
-        # Update the origin for next time.
-        self.last_x = e.x()
-        self.last_y = e.y()
+    def popdisk(self):
+        disk = self.stack.pop()
+        disk.cleardisk()
+        self.toppos -= disk.dheight
+        return disk
+        
 
-    def mouseReleaseEvent(self, e):
-        self.last_x = None
-        self.last_y = None
-COLORS = [
-# 17 undertones https://lospec.com/palette-list/17undertones
-'#000000', '#141923', '#414168', '#3a7fa7', '#35e3e3', '#8fd970', '#5ebb49',
-'#458352', '#dcd37b', '#fffee5', '#ffd035', '#cc9245', '#a15c3e', '#a42f3b',
-'#f45b7a', '#c24998', '#81588d', '#bcb0c2', '#ffffff',
-]
+class Hanoi(object):
+    def __init__(self,n=3,start="A",workspace="B",destination="C"):
+        self.startp = Pole(start,0,0)
+        self.workspacep = Pole(workspace,150,0)
+        self.destinationp = Pole(destination,300,0)
+        self.startp.showpole()
+        self.workspacep.showpole()
+        self.destinationp.showpole()
+        for i in range(n):
+            self.startp.pushdisk(Disk("d"+str(i),0,i*20,20,(n-i)*30))
 
+    def move_disk(self,start,destination):
+        disk = start.popdisk()
+        destination.pushdisk(disk)
 
-class QPaletteButton(QtWidgets.QPushButton):
+    def move_tower(self,n,s,d,w):
+        if n == 1:
+            self.move_disk(s,d)
+        else:
+            self.move_tower(n-1,s,w,d)
+            self.move_disk(s,d)
+            self.move_tower(n-1,w,d,s)
 
-    def __init__(self, color):
-        super().__init__()
-        self.setFixedSize(QtCore.QSize(24,24))
-        self.color = color
-        self.setStyleSheet("background-color: %s;" % color)
-class MainWindow(QtWidgets.QMainWindow):
-
-    def __init__(self):
-        super().__init__()
-
-        self.canvas = Canvas()
-
-        w = QtWidgets.QWidget()
-        l = QtWidgets.QVBoxLayout()
-        w.setLayout(l)
-        l.addWidget(self.canvas)
-
-        palette = QtWidgets.QHBoxLayout()
-        self.add_palette_buttons(palette)
-        l.addLayout(palette)
-
-        self.setCentralWidget(w)
-
-    def add_palette_buttons(self, layout):
-        for c in COLORS:
-            b = QPaletteButton(c)
-            b.pressed.connect(lambda c=c: self.canvas.set_pen_color(c))
-            layout.addWidget(b)
-
-
-app = QtWidgets.QApplication(sys.argv)
-window = MainWindow()
-window.show()
-app.exec_()
+    def solve(self):
+        self.move_tower(3,self.startp,self.destinationp,self.workspacep)
+        
+h = Hanoi()
+h.solve()
