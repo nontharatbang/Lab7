@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 
 
 class MainWindow(QtWidgets.QMainWindow):
+
     def __init__(self):
         super().__init__()
 
@@ -11,12 +12,12 @@ class MainWindow(QtWidgets.QMainWindow):
         canvas = QtGui.QPixmap(400, 300)
         self.label.setPixmap(canvas)
         self.setCentralWidget(self.label)
-        self.draw_something()
 
-    def draw_something(self):
+    def mouseMoveEvent(self, e):
         painter = QtGui.QPainter(self.label.pixmap())
-        painter.drawLine(10, 10, 300, 200)
+        painter.drawPoint(e.x(), e.y())
         painter.end()
+        self.update()
 
 
 app = QtWidgets.QApplication(sys.argv)
