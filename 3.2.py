@@ -21,9 +21,10 @@ class Pole(object):
         
         for i in range(2):
             self.t.forward(self.pthick/2)
-            self.t.left(self.plength/2)
+            self.t.left(90)
+            self.t.forward(self.plength)
+            self.t.left(90)
             self.t.forward(self.pthick/2)
-            self.t.left(self.plength/2)
         
         self.t.end_fill
         #self.t.pu()

@@ -19,9 +19,10 @@ class Disk(object):
         
         for i in range(2):
             self.t.forward(self.dwidth/2)
-            self.t.left(self.dheight/2)
+            self.t.left(90)
+            self.t.forward(self.dheight)
+            self.t.left(90)
             self.t.forward(self.dwidth/2)
-            self.t.left(self.dheight/2)
         
         self.t.end_fill
         #self.t.pu()
