@@ -8,7 +8,7 @@ class Canvas(QLabel):
 
     def __init__(self):
         super().__init__()
-        pixmap = QPixmap(600, 300)
+        pixmap = QPixmap(500, 400)
         pixmap.fill(Qt.white)
         self.setPixmap(pixmap)
 
@@ -19,10 +19,10 @@ class Canvas(QLabel):
         self.pen_color = QColor(c)
 
     def mouseMoveEvent(self, e):
-        if self.last_x is None: # First event.
+        if self.last_x is None:
             self.last_x = e.x()
             self.last_y = e.y()
-            return # Ignore the first time.
+            return
 
         canvas = self.pixmap()
         painter = QPainter(canvas)
@@ -34,28 +34,12 @@ class Canvas(QLabel):
         painter.end()
         self.setPixmap(canvas)
 
-        # Update the origin for next time.
         self.last_x = e.x()
         self.last_y = e.y()
 
     def mouseReleaseEvent(self, e):
         self.last_x = None
         self.last_y = None
-COLORS = [
-# 17 undertones https://lospec.com/palette-list/17undertones
-'#000000', '#141923', '#414168', '#3a7fa7', '#35e3e3', '#8fd970', '#5ebb49',
-'#458352', '#dcd37b', '#fffee5', '#ffd035', '#cc9245', '#a15c3e', '#a42f3b',
-'#f45b7a', '#c24998', '#81588d', '#bcb0c2', '#ffffff',
-]
-
-
-class QPaletteButton(QPushButton):
-
-    def __init__(self, color):
-        super().__init__()
-        self.setFixedSize(QSize(24,24))
-        self.color = color
-        self.setStyleSheet("background-color: %s;" % color)
 
 class MainWindow(QMainWindow):
 
@@ -69,25 +53,14 @@ class MainWindow(QMainWindow):
         w.setLayout(l)
         l.addWidget(self.canvas)
 
-        palette = QHBoxLayout()
-        self.add_palette_buttons(palette)
-        l.addLayout(palette)
-
         self.setCentralWidget(w)
 
         clear = QPushButton("Clear", self)
         clear.clicked.connect(self.clear_canvas)
         l.addWidget(clear)
-        
-
-    def add_palette_buttons(self, layout):
-        for c in COLORS:
-            b = QPaletteButton(c)
-            b.pressed.connect(lambda c=c: self.canvas.set_pen_color(c))
-            layout.addWidget(b)
     
     def clear_canvas(self):
-        pixmap = QPixmap(600, 300)
+        pixmap = QPixmap(500, 400)
         pixmap.fill(Qt.white)
         self.canvas.setPixmap(pixmap)
 
