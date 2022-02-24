@@ -28,3 +28,10 @@ class Pole(object):
         
         self.t.end_fill
         #self.t.pu()
+
+    def pushdisk(self, disk):
+        disk.newpos(self.pxpos, self.toppos)
+        disk.showdisk()
+        self.toppos += disk.dheight
+        self.stack.append(disk)
+        
