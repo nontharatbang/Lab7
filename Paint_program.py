@@ -84,7 +84,7 @@ class MainWindow(QtWidgets.QMainWindow):
             b.pressed.connect(lambda c=c: self.canvas.set_pen_color(c))
             layout.addWidget(b)
     
-    def clear_canvas(self, layout):
+    def clear_canvas(self):
         self.canvas.fill(QtGui.QColor('#ffffff'))
 
 
