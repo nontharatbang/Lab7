@@ -14,10 +14,16 @@ class Simple_drawing_window2(QWidget):
         p.begin(self)
 
         p.setPen(QColor(0, 0, 0))
-        p.setBrush(QColor(0, 127, 0))
-        p.drawLine(10,10,300,200)
+        p.setBrush(QColor(255, 255, 0))
+        p.drawPolygon(
+            [QPoint(0, 85), QPoint(75, 75),
+             QPoint(100, 10), QPoint(125, 75),
+             QPoint(200, 85), QPoint(150, 125),
+             QPoint(160, 190), QPoint(100, 150),
+             QPoint(40, 190), QPoint(50, 125)
+            ])
 
-        p.drawPixmap(QRect(0,250,100,100), self.rabbit)
+        p.drawPixmap(QRect(50,50,100,100), self.rabbit)
 
         p.end()
 
