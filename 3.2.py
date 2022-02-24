@@ -11,13 +11,14 @@ class Pole(object):
         self.plength = length
 
         self.t = Turtle()
+        self.t.speed(0)
         self.t.fillcolor("green")
 
     def showpole(self):
         self.t.pu()
         self.t.setposition(self.pxpos, self.pypos)
         self.t.pd()
-        self.t.begin_fill
+        self.t.begin_fill()
         
         for i in range(2):
             self.t.forward(self.pthick/2)
@@ -26,8 +27,8 @@ class Pole(object):
             self.t.left(90)
             self.t.forward(self.pthick/2)
         
-        self.t.end_fill
-        #self.t.pu()
+        self.t.end_fill()
+        self.t.pu()
 
     def pushdisk(self, disk):
         disk.newpos(self.pxpos, self.toppos)
