@@ -10,7 +10,7 @@ class Menu(QMainWindow):
         super().__init__()
         self.drawing = False
         self.lastPoint = QPoint()
-        self.image = QPixmap("profile.jpg")
+        self.image = QPixmap("white.png")
         self.setGeometry(100, 100, 500, 300)
         self.resize(self.image.width(), self.image.height())
         self.show()
