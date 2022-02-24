@@ -1,20 +1,22 @@
 import sys
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 
 
-class Canvas(QtWidgets.QLabel):
+class Canvas(QLabel):
 
     def __init__(self):
         super().__init__()
-        pixmap = QtGui.QPixmap(600, 300)
+        pixmap = QPixmap(600, 300)
+        pixmap.fill(Qt.white)
         self.setPixmap(pixmap)
 
         self.last_x, self.last_y = None, None
-        self.pen_color = QtGui.QColor('#000000')
+        self.pen_color = QColor('#000000')
 
     def set_pen_color(self, c):
-        self.pen_color = QtGui.QColor(c)
+        self.pen_color = QColor(c)
 
     def mouseMoveEvent(self, e):
         if self.last_x is None: # First event.
@@ -23,7 +25,7 @@ class Canvas(QtWidgets.QLabel):
             return # Ignore the first time.
 
         canvas = self.pixmap()
-        painter = QtGui.QPainter(canvas)
+        painter = QPainter(canvas)
         p = painter.pen()
         p.setWidth(4)
         p.setColor(self.pen_color)
@@ -47,33 +49,33 @@ COLORS = [
 ]
 
 
-class QPaletteButton(QtWidgets.QPushButton):
+class QPaletteButton(QPushButton):
 
     def __init__(self, color):
         super().__init__()
-        self.setFixedSize(QtCore.QSize(24,24))
+        self.setFixedSize(QSize(24,24))
         self.color = color
         self.setStyleSheet("background-color: %s;" % color)
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
 
         self.canvas = Canvas()
 
-        w = QtWidgets.QWidget()
-        l = QtWidgets.QVBoxLayout()
+        w = QWidget()
+        l = QVBoxLayout()
         w.setLayout(l)
         l.addWidget(self.canvas)
 
-        palette = QtWidgets.QHBoxLayout()
+        palette = QHBoxLayout()
         self.add_palette_buttons(palette)
         l.addLayout(palette)
 
         self.setCentralWidget(w)
 
-        clear = QtWidgets.QPushButton("Clear", self)
+        clear = QPushButton("Clear", self)
         clear.clicked.connect(self.clear_canvas)
         l.addWidget(clear)
         
@@ -85,10 +87,12 @@ class MainWindow(QtWidgets.QMainWindow):
             layout.addWidget(b)
     
     def clear_canvas(self):
-        self.canvas.fill(QtGui.QColor('#ffffff'))
+        pixmap = QPixmap(600, 300)
+        pixmap.fill(Qt.white)
+        self.canvas.setPixmap(pixmap)
 
 
-app = QtWidgets.QApplication(sys.argv)
+app = QApplication(sys.argv)
 window = MainWindow()
 window.show()
-app.exec_()
+app.exec()
